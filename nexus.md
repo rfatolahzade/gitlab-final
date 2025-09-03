@@ -97,6 +97,6 @@ in the panel:
 ![p2-nexus](images-nexus/nexus7-push-2.JPG)
 
 On Gilab Server test docker login to local docker registry:
-
+(You should update hosts file and define docker.local in hosts)
 ![gitlab-docker-login](images-nexus/gitlab-docker-login-local.JPG)
 
