@@ -71,3 +71,29 @@ root@nexus:/Projects/nexus# cat /etc/hosts
 127.0.0.1 nexus.local
 127.0.0.1 docker.local
 ```
+test login:
+
+user: admin and password will be in "/nexus-data/admin.password"
+
+![login-nexus](images-nexus/nexus6-login.JPG)
+
+Lets checkout the Nexus panel:
+
+![login-nexus-panel](images-nexus/nexus1.JPG)
+
+define our hosted docker reg:
+
+![login-nexus-panel](images-nexus/nexus-define-reg.JPG)
+
+its empty for now:
+
+![login-nexus-panel](images-nexus/nexus3-browse.JPG)
+
+push an image:
+
+![p1-nexus](images-nexus/nexus7-push-1.JPG)
+
+in the panel:
+
+![p2-nexus](images-nexus/nexus7-push-2.JPG)
+
