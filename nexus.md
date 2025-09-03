@@ -24,6 +24,8 @@ chown 200:200 /data/registry/nexus-data -R
 ```
 
 #### nginx configs:
+installastion via this url:https://nginx.org/en/linux_packages.html#Ubuntu
+
 for  admin panel
 ```bash
 root@nexus:/Projects/nexus# cat /etc/nginx/conf.d/nexus.conf
