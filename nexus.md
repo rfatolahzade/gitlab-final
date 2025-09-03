@@ -98,5 +98,12 @@ in the panel:
 
 On Gilab Server test docker login to local docker registry:
 (You should update hosts file and define docker.local in hosts)
+```bash
+ cat /etc/hosts
+127.0.0.1 gitlab
+127.0.0.1 gitlab.local
+192.168.1.6 nexus.local
+192.168.1.6 docker.local
+```
 ![gitlab-docker-login](images-nexus/gitlab-docker-login-local.JPG)
 
