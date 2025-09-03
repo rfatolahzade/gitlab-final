@@ -97,3 +97,7 @@ in the panel:
 
 ![p2-nexus](images-nexus/nexus7-push-2.JPG)
 
+On Gilab Server test docker login to local docker registry:
+
+![gitlab-docker-login](images-nexus/gitlab-docker-login-local.JPG)
+
