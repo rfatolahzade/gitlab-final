@@ -253,3 +253,94 @@ networks:
 
 on gitlab panel:
 ![define-runner-on-gitlab-panel](images-gitlab/define-runner-on-panel.JPG) 
+
+we need to change config.toml on runner host as below:
+```bash
+cat /data/gitlab-runner/etc/config.toml
+concurrent = 1
+check_interval = 0
+shutdown_timeout = 0
+
+[session_server]
+  session_timeout = 1800
+
+[[runners]]
+  name = "runner"
+  url = "http://gitlab.local"
+  id = 1
+  token = "glrt-wOJ8KePGKx3MT_1GwoWdrW86MQp0OjEKdToxCw.01.1204gx7io"
+  token_obtained_at = 2025-09-04T10:38:26Z
+  token_expires_at = 0001-01-01T00:00:00Z
+  executor = "docker"
+  [runners.cache]
+    MaxUploadedArchiveSize = 0
+    [runners.cache.s3]
+    [runners.cache.gcs]
+    [runners.cache.azure]
+  [runners.docker]
+    pull_policy = "if-not-present"
+    tls_verify = false
+    image = "docker"
+    privileged = false
+    disable_entrypoint_overwrite = false
+    oom_kill_disable = false
+    disable_cache = false
+    volumes = ["/var/run/docker.sock:/var/run/docker.sock", "/cache"]
+    shm_size = 0
+    network_mtu = 0
+    network_mode = "host"
+
+```
+
+Now lets create simple pipeline to build and push to our local registry:
+
+pipeline:
+
+```bash
+stages:
+  - build
+  - push
+
+variables:
+  IMAGE_NAME: "node-web-app"
+  DOCKERLOCALREG_IMAGE: "docker.local/$IMAGE_NAME"
+
+build_and_push:
+  image: docker:latest
+  stage: push
+  services:
+    - docker:dind
+  variables:
+    DOCKER_TLS_CERTDIR: ""
+  before_script:
+    # Login to Local Reg
+    - echo "$DOCKERLOCALREG_PASS" | docker login -u "$DOCKERLOCALREG_USERNAME" --password-stdin docker.local
+  script:
+    # Build the image
+    - docker build -t "$DOCKERLOCALREG_IMAGE:$CI_COMMIT_REF_SLUG" .
+    
+    # Tag for Local Reg
+    - docker tag "$DOCKERLOCALREG_IMAGE:$CI_COMMIT_REF_SLUG" "$DOCKERLOCALREG_IMAGE:latest"
+
+    # Push to Docker Local Reg
+    - docker push "$DOCKERLOCALREG_IMAGE:$CI_COMMIT_REF_SLUG"
+    - docker push "$DOCKERLOCALREG_IMAGE:latest"
+  only:
+    - main
+ #   - tags
+
+
+```
+Define variables on gitlab panel:
+![define-varsl](images-gitlab/variables-gitlab.JPG) 
+
+The result:
+![define-varsl](images-gitlab/nodejs-pipeline-to-local-reg.JPG) 
+
+some detail:
+![define-varsl](images-gitlab/nodejs-pipeline-to-local-reg-detail.JPG) 
+
+on nexus panel:
+![define-varsl](images-gitlab/nodejs-pipeline-to-local-reg-detail-nexus-panel.JPG) 
+
+
