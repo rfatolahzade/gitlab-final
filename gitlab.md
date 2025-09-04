@@ -9,41 +9,44 @@ mkdir -p /Projects/gitlab/volumes/gitlab/{config,logs,data}
 mkdir -p /Projects/gitlab/volumes/postgres/data
 mkdir -p /Projects/gitlab/volumes/redis/data
 
-# Set proper ownership (WSL may need different user)
+# GitLab needs UID 1000, Postgres UID 999, Redis UID 999
 chown -R 1000:1000 /Projects/gitlab/volumes/gitlab
 chown -R 999:999 /Projects/gitlab/volumes/postgres
 chown -R 999:999 /Projects/gitlab/volumes/redis
 
-# Create volumes with bind mounts
+# GitLab
 docker volume create --driver local \
   --opt type=none \
-  --opt device=/Projects/gitlab/volumes/config \
+  --opt device=/Projects/gitlab/volumes/gitlab/config \
   --opt o=bind \
   gitlab-config
 
 docker volume create --driver local \
   --opt type=none \
-  --opt device=/Projects/gitlab/volumes/logs \
+  --opt device=/Projects/gitlab/volumes/gitlab/logs \
   --opt o=bind \
   gitlab-logs
 
 docker volume create --driver local \
   --opt type=none \
-  --opt device=/Projects/gitlab/volumes/data \
+  --opt device=/Projects/gitlab/volumes/gitlab/data \
   --opt o=bind \
   gitlab-data
 
+# Postgres
 docker volume create --driver local \
   --opt type=none \
   --opt device=/Projects/gitlab/volumes/postgres/data \
   --opt o=bind \
   postgres-data
 
+# Redis
 docker volume create --driver local \
   --opt type=none \
   --opt device=/Projects/gitlab/volumes/redis/data \
   --opt o=bind \
   redis-data
+  
 
 ```
 
