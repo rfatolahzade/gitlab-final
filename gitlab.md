@@ -147,3 +147,109 @@ GITLAB_ROOT_PASSWORD=kX1PP9heAXtE_T
 
 after a while you can login via root as user and password (GITLAB_ROOT_PASSWORD in .env file)
 ![login-gitlab](images-gitlab/gitlab-login.JPG)
+
+
+Now lets define runner via gitlab panel:
+![define-runner](images-gitlab/define-runner-1.JPG)
+
+and then click on "Create instance runner"
+![define-runner-ins](images-gitlab/define-runner-2.JPG)
+
+now lets setup runner via compose:
+
+```bash
+services:
+  gitlab-runner:
+    container_name: gitlab-runner
+    restart: always
+    hostname: gitlab-runner
+    image: gitlab/gitlab-runner:alpine
+    volumes:
+      - /data/gitlab-runner/etc:/etc/gitlab-runner
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/hosts:/etc/hosts
+    networks:
+      - gitlab-network
+networks:
+  gitlab-network:
+    name: gitlab-network
+
+
+```
+
+then we should run the command in previus image to register our runner to our gitlab, cuz we have runner as container we should run inside the runner container
+```bash
+root@gitlab:/data/gitlab-runner/etc# docker exec -it gitlab-runner  bash
+gitlab-runner:/# gitlab-runner register
+Runtime platform                                    arch=amd64 os=linux pid=22 revision=9ba718cd version=18.3.0
+Running in system-mode.
+
+Enter the GitLab instance URL (for example, https://gitlab.com/):
+http://gitlab.local
+Enter the registration token:
+glrt-wOJ8KePGKx3MT_1GwoWdrW86MQp0OjEKdToxCw.01.1204gx7io
+Verifying runner... is valid                        correlation_id=01K4A4WRY17TXNRGA6Q1YRZHBA runner=wOJ8KePGK
+Enter a name for the runner. This is stored only in the local config.toml file:
+[gitlab-runner]: runner
+Enter an executor: ssh, parallels, docker-windows, kubernetes, instance, custom, shell, virtualbox, docker, docker+machine, docker-autoscaler:
+docker
+Enter the default Docker image (for example, ruby:3.3):
+docker
+Runner registered successfully. Feel free to start it, but if it's running already the config should be automatically reloaded!
+
+Configuration (with the authentication token) was saved in "/etc/gitlab-runner/config.toml"
+```
+
+the config.toml will be:
+```bash
+root@gitlab:/data/gitlab-runner/etc# cat config.toml
+concurrent = 1
+check_interval = 0
+shutdown_timeout = 0
+
+[session_server]
+  session_timeout = 1800
+
+[[runners]]
+  name = "runner"
+  url = "http://gitlab.local"
+  id = 1
+  token = "glrt-wOJ8KePGKx3MT_1GwoWdrW86MQp0OjEKdToxCw.01.1204gx7io"
+  token_obtained_at = 2025-09-04T10:38:26Z
+  token_expires_at = 0001-01-01T00:00:00Z
+  executor = "docker"
+  [runners.cache]
+    MaxUploadedArchiveSize = 0
+    [runners.cache.s3]
+    [runners.cache.gcs]
+    [runners.cache.azure]
+  [runners.docker]
+    tls_verify = false
+    image = "docker"
+    privileged = false
+    disable_entrypoint_overwrite = false
+    oom_kill_disable = false
+    disable_cache = false
+    volumes = ["/cache"]
+    shm_size = 0
+    network_mtu = 0
+root@gitlab:/data/gitlab-runner/etc# cat /Projects/runner/compose.yml
+services:
+  gitlab-runner:
+    container_name: gitlab-runner
+    restart: always
+    hostname: gitlab-runner
+    image: gitlab/gitlab-runner:alpine
+    volumes:
+      - /data/gitlab-runner/etc:/etc/gitlab-runner
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/hosts:/etc/hosts
+    networks:
+      - gitlab-network
+networks:
+  gitlab-network:
+    name: gitlab-network
+```
+
+on gitlab panel:
+![define-runner-on-gitlab-panel](images-gitlab/define-runner-on-panel.JPG) 
