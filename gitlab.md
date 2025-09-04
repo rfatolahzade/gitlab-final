@@ -144,3 +144,6 @@ GITLAB_SSH_PORT=2222
 GITLAB_ROOT_PASSWORD=kX1PP9heAXtE_T
 
 ```
+
+after a while you can login via root as user and password (GITLAB_ROOT_PASSWORD in .env file)
+![login-gitlab](images-gitlab/gitlab-login.JPG)
