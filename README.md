@@ -315,6 +315,9 @@ deploy-prod:
   when: manual
 
 ```
+The whole project tree will be:
+![the-project](images-task/the-whole-project-tree.JPG)
+
 We have to add KUBE_CONFIGB64 as a variable.(I already added DOCKERLOCALREG_PASS & DOCKERLOCALREG_USERNAME)
 ```bash
 base64 -w 0 ~/.kube/config
