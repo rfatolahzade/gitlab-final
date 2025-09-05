@@ -327,5 +327,6 @@ base64 -w 0 ~/.kube/config
 ![kubeb64-config-variables-forGitlab](images-task/kube-config-var.JPG)
 
 After that on dev branch deploy will be automatically and on prod it will be manually.
- 
+
+"Unfortunately due to insufficient resources (RAM and CPU), not all machines can be powered on at once, making it impossible to proceed with the process or capture a screenshot of the deployment."
 
