@@ -262,7 +262,7 @@ deploy-dev:
     - build-dev
   script:
     - mkdir -p ~/.kube && chmod 700 ~/.kube
-    - echo "$KUBE_CONFIG" > ~/.kube/config
+  - echo "$KUBE_CONFIG_B64" | base64 -d > ~/.kube/config
     - kubectl create namespace dev --dry-run=client -o yaml | kubectl apply -f -
     - kubectl create secret docker-registry regcred \
         --docker-server=docker.local \
@@ -300,7 +300,7 @@ deploy-prod:
     - build-prod
   script:
     - mkdir -p ~/.kube && chmod 700 ~/.kube
-    - echo "$KUBE_CONFIG" > ~/.kube/config
+  - echo "$KUBE_CONFIG_B64" | base64 -d > ~/.kube/config
     - kubectl create namespace prod --dry-run=client -o yaml | kubectl apply -f -
     - kubectl create secret docker-registry regcred \
         --docker-server=docker.local \
@@ -315,7 +315,16 @@ deploy-prod:
   when: manual
 
 ```
-We have to add KUBE_CONFIG as a variable.(i already added DOCKERLOCALREG_PASS & DOCKERLOCALREG_USERNAME)
+We have to add KUBE_CONFIGB64 as a variable.(I already added DOCKERLOCALREG_PASS & DOCKERLOCALREG_USERNAME)
+```bash
+base64 -w 0 ~/.kube/config
+#copy the stdout and paste in value on gitlab variables
+#via
+#  - echo "$KUBE_CONFIG_B64" | base64 -d > ~/.kube/config
+#we will encoded the config file.
+```
+
+![kubeb64-config-variables-forGitlab](images-task/kube-config-var.JPG)
 
 After that on dev branch deploy will be automatically and on prod it will be manually.
  
